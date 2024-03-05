@@ -1,13 +1,16 @@
-var backgroundColor = 0;
+var backgroundColor = 300;
 var shapeColor = 0;
-var gridSize = 10;
+var gridSize = 20;
 
 function draw_one_frame(cur_frac) {
+	colorMode(HSB, 300);
+
 	// set background colour to last shape colour on first frame	
 	if(cur_frac == 0) color_change();
 
 	// draw background using a rect
 	strokeWeight(0);
+	stroke(backgroundColor);
 	fill(backgroundColor);
 	rect(0, 0, width, height);
 
@@ -26,13 +29,12 @@ function draw_one_frame(cur_frac) {
 				ellipse(i*(width/gridSize) + (width/gridSize/2), j*(width/gridSize) + scrollAmount - width, ellipseSize);
 			}
 		}
-
 	}
 
 }
 
 function color_change() {
 	backgroundColor = shapeColor;
-	shapeColor = color(random(255), random(255), random(255));
+	shapeColor = color(random(300), 100, 300);
 }
 
