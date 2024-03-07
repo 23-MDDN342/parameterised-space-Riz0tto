@@ -7,15 +7,29 @@ function draw_one_frame(cur_frac) {
 	colorMode(HSB, 300);
 
 	// set background colour to last shape colour on first frame	
-	if(cur_frac == 0) color_change();
+	//if(cur_frac == 0) color_change();
 
 	// draw background using a rect
 	strokeWeight(0);
-	stroke(backgroundColor);
-	fill(backgroundColor);
+	fill(160, 150, 300);
 	rect(0, 0, width, height);
 
 	// draw circles
+	//drawCircles(cur_frac);
+
+	// curve
+	drawCurves(cur_frac);
+	push();
+	angleMode(DEGREES);
+	translate(height*(width/height), 0);
+	rotate(90);
+	scale(width/height);
+	drawCurves(cur_frac);
+	pop();
+	
+}
+
+function drawCircles(cur_frac) {
 	ellipseMode(CENTER);
 	fill(shapeColor);
 
@@ -31,9 +45,14 @@ function draw_one_frame(cur_frac) {
 			}
 		}
 	}	
+}
 
-	// curve
+function color_change(cur_frac) {
+	backgroundColor = shapeColor;
+	shapeColor = color(random(150, 200), 150, 300);
+}
 
+function drawCurves(cur_frac) {
 	for(let j = 0; j < numCurves; j++) {
 		let curveHeight = map(cur_frac, 0, 1, 0, height);
 
@@ -46,17 +65,12 @@ function draw_one_frame(cur_frac) {
 
 		beginShape();
 		for(let i = -1; i <= gridSize+1; i++) {	
-			curveVertex(i*(width/gridSize), getNoiseValue(i*(width/gridSize), curveHeight + j*(height/numCurves), 0, "curveNoise", -50, 50, 200) + j*(height/numCurves));
+			curveVertex(i*(width/gridSize), getNoiseValue(i*(width/gridSize), curveHeight + j*(height/numCurves), 0, "curveNoise", -25, 25, 200) + j*(height/numCurves));
 		}
 
 		endShape();
 
 		pop();
 	}
-}
-
-function color_change() {
-	backgroundColor = shapeColor;
-	shapeColor = color(random(300), 50, 300);
 }
 
