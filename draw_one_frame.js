@@ -53,9 +53,16 @@ function color_change(cur_frac) {
 }
 
 function drawCurves(cur_frac) {
+	let curveHeight;
+	
 	for(let j = 0; j < numCurves; j++) {
-		let curveHeight = map(cur_frac, 0, 1, 0, height);
-
+		if(cur_frac <= 0.5){
+		curveHeight = map(cur_frac, 0, 0.5, 0, height);
+		} else {
+			 
+			curveHeight = map(cur_frac, 0.5,1, height, 0);
+		}
+			console.log(curveHeight)
 		push();
 
 		//translate(0, curveHeight);
@@ -65,12 +72,22 @@ function drawCurves(cur_frac) {
 
 		beginShape();
 		for(let i = -1; i <= gridSize+1; i++) {	
-			curveVertex(i*(width/gridSize), getNoiseValue(i*(width/gridSize), curveHeight + j*(height/numCurves), 0, "curveNoise", -25, 25, 200) + j*(height/numCurves));
+			curveVertex(i*(width/gridSize), getNoiseValue(i*(width/gridSize), curveHeight + j*(height/numCurves), 1, "curveNoise", -25, 25, 400) + j*(height/numCurves));
 		}
 
 		endShape();
 
+		//console.log(getNoiseValue(10*(width/gridSize), curveHeight + 10*(height/numCurves), 0.8, "curveNoise", -25, 25, 200) + 10*(height/numCurves))
 		pop();
 	}
 }
 
+/* 
+   getNoiseValue arguments:
+   x: current grid location across
+   y: current grid location down
+   loop: can be any value from 0-1 and will loop
+   name: the "name" of the lookup table. probably change this each time.
+   min/max: the minimum and maximum of the value to return
+   smoothness: 1 means elements are not related. larger numbers cause groupings.
+*/
