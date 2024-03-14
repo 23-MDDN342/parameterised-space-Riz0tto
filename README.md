@@ -10,4 +10,5 @@ Experimenting with the Code:
 
 Before attempting to get my initial idea to work, I decided to experiment with the code to see which effects I could create. To start with, I made a rectangle grow from nothing to fill the screen, once the screen was filled it would become the new background. The colour of the rectangle would alternate from black to white every loop. I expanded on this idea by changing the black and white rectangles to randomly coloured circles. My goal with this was to create a looping effect that would change the animation beyond the 24 frame loop.
 
-In order to achieve my initial idea I would need to create block objects that would persist and update beyond the 24 given frames. 
+In order to achieve my initial idea I would need to create block objects that would persist and update beyond the 24 given frames. I have some idea of how I could do this, however the animation would have to be very long to appreciate the effect. Due to this I'm thinking of doing something completely different.
+
