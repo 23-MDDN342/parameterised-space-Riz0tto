@@ -41,11 +41,13 @@ function draw_one_frame(cur_frac) {
 	stroke(0, 0, 300, 200);
 	drawPoolLines(cur_frac);
 
-	// whater glistening effect
-	waterGlisten(cur_frac);	
-
 	pop();
-	
+
+	// whater glistening effect
+	push();
+	translate(0, yScroll); 
+	waterGlisten(yScroll);	
+	pop();
 	
 }
 
@@ -85,16 +87,17 @@ function getAnimatedNoiseValue(cur_frac, posX, posY, resolutionValue) {
 
 }
 
-function waterGlisten() {
+function waterGlisten(yScroll) {
+
 	push();
 
 	for (let i = 0; i < 20; i++) {
 		for (let j = 0; j < 20; j++) {
-			if (random(1) > 0.95) {
-				strokeWeight(width/100 * random(1));
-				stroke(300, 0, 300, 300 * random(1));
-				point(i*width/20, j*height/20);
-			}
+
+			let noiseValue = getNoiseValue(i*width/20, j*height/20 + yScroll, 1, "glistenNoise", -1, 1, 100);			
+			strokeWeight(width/100 * (noiseValue));
+			stroke(300, 0, 300, 300 * noiseValue);
+			point(i*width/20 + (width/20 * noiseValue), j*height/20 + (height/20 * noiseValue));
 		}
 	}
 
