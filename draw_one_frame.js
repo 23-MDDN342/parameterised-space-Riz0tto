@@ -13,10 +13,37 @@ function draw_one_frame(cur_frac) {
 
 	let yScroll = map(cur_frac, 0, 1, 0, height/numPoolLines);
 
+	// scrolls effects slowly for subtle vertical movement
 	push();	
-	translate(0, yScroll);
+	translate(0, yScroll); 
+
+	// pool line chromatic aberration
+
+	// red shift
+	push();
+	translate(width/2, height/2);
+	scale(1.01);
+	translate(-width/2, -height/2);
+	stroke(300, 200, 300, 50);
 	drawPoolLines(cur_frac);
-	waterGlisten(cur_frac);		
+	pop();
+
+	// green shift
+	push();
+	translate(width/2, height/2);
+	scale(0.99);
+	translate(-width/2, -height/2);
+	stroke(100, 300, 300, 50);
+	drawPoolLines(cur_frac);
+	pop();
+	
+	// white pool lines
+	stroke(0, 0, 300, 200);
+	drawPoolLines(cur_frac);
+
+	// whater glistening effect
+	waterGlisten(cur_frac);	
+
 	pop();
 	
 	
@@ -24,9 +51,8 @@ function draw_one_frame(cur_frac) {
 
 function drawPoolLines(cur_frac) {	
 	let scrollOffset = 0 - (height/numPoolLines);
-	for (let j = 0; j < numPoolLines; j++) {		
-
-		stroke(0, 0, 300, 150);
+	for (let j = 0; j < numPoolLines; j++) {	
+		
 		strokeWeight(width/200);
 		noFill();
 
