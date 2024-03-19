@@ -1,8 +1,12 @@
 var backgroundColor = 300;
 var shapeColor = 0;
 var numPoolLines = 20;
+var poolLineVertices = 25;
+var glistenAmount = 20;
+const ease = new p5.Ease();
 
 function draw_one_frame(cur_frac) {
+	
 
 	colorMode(HSB, 300);
 
@@ -11,11 +15,12 @@ function draw_one_frame(cur_frac) {
 	fill(160, 150, 300);
 	rect(0, 0, width, height);
 
-	let yScroll = map(cur_frac, 0, 1, 0, height/numPoolLines);
+	let poolLinesYScroll = map(cur_frac, 0, 1, 0, height/numPoolLines);
+	let glistenYScroll = map(cur_frac, 0, 1, 0, height/glistenAmount);
 
 	// scrolls effects slowly for subtle vertical movement
 	push();	
-	translate(0, yScroll); 
+	translate(0, poolLinesYScroll); 
 
 	// pool line chromatic aberration
 
@@ -43,12 +48,10 @@ function draw_one_frame(cur_frac) {
 
 	pop();
 
-	// whater glistening effect
+	// water glistening effect
 	push();
-	translate(0, yScroll); 
-	waterGlisten(yScroll);	
+	waterGlisten(glistenYScroll);	
 	pop();
-	
 }
 
 function drawPoolLines(cur_frac) {	
@@ -59,16 +62,16 @@ function drawPoolLines(cur_frac) {
 		noFill();
 
 		beginShape();
-		for (let i = -1; i <= numPoolLines+1; i++) {	
+		for (let i = -1; i <= poolLineVertices+1; i++) {	
 			let curveHeight = getAnimatedNoiseValue(cur_frac, i*(width/numPoolLines), j*(height/numPoolLines), width);
-			curveVertex(i*(width/numPoolLines), curveHeight + j*((height + Math.abs(scrollOffset))/numPoolLines) + (0.5*height/numPoolLines) + scrollOffset);
+			curveVertex(i*(width/poolLineVertices), curveHeight + j*((height + Math.abs(scrollOffset))/numPoolLines) + (0.5*height/numPoolLines) + scrollOffset);
 		}
 		endShape();
 
 		beginShape();
-		for (let i = -1; i <= numPoolLines+1; i++) {	
+		for (let i = -1; i <= poolLineVertices+1; i++) {	
 			let curveHeight = getAnimatedNoiseValue(cur_frac, i*(width/numPoolLines), j*(height/numPoolLines), height);
-			curveVertex(curveHeight + j*(width/numPoolLines) + (0.5*width/numPoolLines), i*((height + Math.abs(scrollOffset))/numPoolLines) + scrollOffset);
+			curveVertex(curveHeight + j*(width/numPoolLines) + (0.5*width/numPoolLines), i*((height + Math.abs(scrollOffset))/poolLineVertices) + scrollOffset);
 		}
 		endShape();
 	}
@@ -76,34 +79,38 @@ function drawPoolLines(cur_frac) {
 
 function getAnimatedNoiseValue(cur_frac, posX, posY, resolutionValue) {
 
+	var ease_amount_forward = ease.linear(cur_frac);
+	var ease_amount_back = ease.linear(1-cur_frac);
+
 	let animScroll;
+
 	if (cur_frac <= 0.5){
-		animScroll = map(cur_frac, 0, 0.5, 0, resolutionValue);
+		animScroll = map(ease_amount_forward, 0, 1, 0, resolutionValue);
 		} 			
-	else animScroll = map(cur_frac, 0.5, 1, resolutionValue, 0);
+	else animScroll = map(ease_amount_back, 1, 0, resolutionValue, 0);
 
-	if (resolutionValue == width) return getNoiseValue(posX + animScroll, posY, 1, "animatedNoise", -20, 20, 1000);
-	if (resolutionValue == height) return getNoiseValue(posX, posY + animScroll, 1, "animatedNoise", -20, 20, 1000);
+	if (resolutionValue == width) return getNoiseValue(posX + animScroll, posY, 1, "animatedNoise", -5, 5, width/numPoolLines*10);
+	if (resolutionValue == height) return getNoiseValue(posX, posY + animScroll, 1, "animatedNoise", -5, 5, width/numPoolLines*10);
 
+	
 }
 
 function waterGlisten(yScroll) {
 
 	push();
 
-	for (let i = 0; i < 20; i++) {
-		for (let j = 0; j < 20; j++) {
+	for (let i = 0; i < glistenAmount; i++) {
+		for (let j = 0; j < glistenAmount; j++) {
 
-			let noiseValue = getNoiseValue(i*width/20, j*height/20 + yScroll, 1, "glistenNoise", -1, 1, 100);			
+			let noiseValue = getNoiseValue(i*width/glistenAmount, (j*height/glistenAmount) + yScroll, 1, "glistenNoise", -1, 1, width/glistenAmount);			
 			strokeWeight(width/100 * (noiseValue));
 			stroke(300, 0, 300, 300 * noiseValue);
-			point(i*width/20 + (width/20 * noiseValue), j*height/20 + (height/20 * noiseValue));
+			point((i*width/glistenAmount) + (width/glistenAmount * noiseValue/2), j*height/glistenAmount + (height/glistenAmount * noiseValue/2) + yScroll);
 		}
 	}
 
 	pop();
 }
-
 
 /* 
    getNoiseValue arguments:
