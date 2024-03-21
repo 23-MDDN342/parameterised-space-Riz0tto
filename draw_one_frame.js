@@ -1,12 +1,8 @@
-var backgroundColor = 300;
-var shapeColor = 0;
 var numPoolLines = 20;
-var poolLineVertices = 25;
+var poolLineVertices = 30;
 var glistenAmount = 20;
-const ease = new p5.Ease();
 
-function draw_one_frame(cur_frac) {
-	
+function draw_one_frame(cur_frac) {	
 
 	colorMode(HSB, 300);
 
@@ -15,7 +11,7 @@ function draw_one_frame(cur_frac) {
 	fill(160, 150, 300);
 	rect(0, 0, width, height);
 
-	let poolLinesYScroll = map(cur_frac, 0, 1, 0, height/numPoolLines);
+	let poolLinesYScroll = map(cur_frac, 0, 1, 0, height/(numPoolLines-1));
 	let glistenYScroll = map(cur_frac, 0, 1, 0, height/glistenAmount);
 
 	// scrolls effects slowly for subtle vertical movement
@@ -61,37 +57,33 @@ function drawPoolLines(cur_frac) {
 		strokeWeight(width/200);
 		noFill();
 
+		// rows
+
 		beginShape();
 		for (let i = -1; i <= poolLineVertices+1; i++) {	
-			let curveHeight = getAnimatedNoiseValue(cur_frac, i*(width/numPoolLines), j*(height/numPoolLines), width);
+			let curveHeight = getPoolLineNoiseValue(cur_frac, i*(width/numPoolLines), j*(height/numPoolLines), width);
 			curveVertex(i*(width/poolLineVertices), curveHeight + j*((height + Math.abs(scrollOffset))/numPoolLines) + (0.5*height/numPoolLines) + scrollOffset);
 		}
 		endShape();
 
+		// columns
+
 		beginShape();
 		for (let i = -1; i <= poolLineVertices+1; i++) {	
-			let curveHeight = getAnimatedNoiseValue(cur_frac, i*(width/numPoolLines), j*(height/numPoolLines), height);
+			let curveHeight = getPoolLineNoiseValue(cur_frac, i*(width/numPoolLines), j*(height/numPoolLines), height);
 			curveVertex(curveHeight + j*(width/numPoolLines) + (0.5*width/numPoolLines), i*((height + Math.abs(scrollOffset))/poolLineVertices) + scrollOffset);
 		}
 		endShape();
 	}
 }
 
-function getAnimatedNoiseValue(cur_frac, posX, posY, resolutionValue) {
+function getPoolLineNoiseValue(cur_frac, posX, posY, resolutionValue) {
 
-	var ease_amount_forward = ease.linear(cur_frac);
-	var ease_amount_back = ease.linear(1-cur_frac);
+	let animScroll = map(cur_frac, 0.5, 1, resolutionValue, 0);
+	let endSmoothing = 2*(0.5 - Math.abs(cur_frac - 0.5)); // reduces wiggle range towards the start and end for smoothing	
 
-	let animScroll;
-
-	if (cur_frac <= 0.5){
-		animScroll = map(ease_amount_forward, 0, 1, 0, resolutionValue);
-		} 			
-	else animScroll = map(ease_amount_back, 1, 0, resolutionValue, 0);
-
-	if (resolutionValue == width) return getNoiseValue(posX + animScroll, posY, 1, "animatedNoise", -5, 5, width/numPoolLines*10);
-	if (resolutionValue == height) return getNoiseValue(posX, posY + animScroll, 1, "animatedNoise", -5, 5, width/numPoolLines*10);
-
+	if (resolutionValue == width) return getNoiseValue(posX + animScroll, posY, 1, "animatedNoise", -5*endSmoothing, 5*endSmoothing, width/numPoolLines*10);
+	if (resolutionValue == height) return getNoiseValue(posX, posY + animScroll, 1, "animatedNoise", -5*endSmoothing, 5*endSmoothing, width/numPoolLines*10);
 	
 }
 
@@ -111,13 +103,3 @@ function waterGlisten(yScroll) {
 
 	pop();
 }
-
-/* 
-   getNoiseValue arguments:
-   x: current grid location across
-   y: current grid location down
-   loop: can be any value from 0-1 and will loop
-   name: the "name" of the lookup table. probably change this each time.
-   min/max: the minimum and maximum of the value to return
-   smoothness: 1 means elements are not related. larger numbers cause groupings.
-*/

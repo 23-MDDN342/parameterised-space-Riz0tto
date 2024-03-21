@@ -18,4 +18,10 @@ My first use of this wiggling line effect was over the top of my previous experi
 
 Developing the Pool Effect:
 
+I decided to develop this pool effect further. First I integrated the vertical lines into the line drawing function, rather than using rotation and scaling. This means I have much more control over the lines and their scale will be uniform. What makes the effect so interesting to me is how it looks like the lines are distorted by water, or as if there is a filter over a static grid of lines. In reality it's just the lines moving. My next goal was to build on this by adding in more effects to make it look more like water.
 
+To make it look like there's a shiny surface to the water, I added a glistening effect. In order to achieve this effect I used animated noise again, placing down points in a grid and using the noise to move them and change their opacity. This looks like sparkly reflections popping in and out as the surface of the water changes, or at least that's my intention.
+
+Another effect that I created was chromatic aberration. Chromatic aberration occurs when a lens doesn't converge all the wavelengths of light. Thiss is often seen on the fringes of the lenses view as colours emerging either side of objects. To create the effect in my pool, I create two more identical grids of pool lines, one red, one green and slightly scale them up and down respectively from the center of the screen. My intention with this effect is just to add another physically based effect in order to make the water more realistic feeling.
+
+I spent some time considering adding more elements but decided to keep it simple. My final touches were improving the smoothness of the effect and making sure all the parameters can be changed without affecting the motion. Overall, I'm very happy with the result and can see it being used as a nice calm background that's not too distracting.
